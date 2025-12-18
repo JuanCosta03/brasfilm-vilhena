@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrasFilm - Películas de Controle Solar em Vilhena</title>
+    <!-- Carregamento do Tailwind CSS para um design responsivo e minimalista -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Ícones do Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS para Mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        /* Paleta de Cores: Verde esmeralda primário e um verde mais claro para destaque */
+        :root {
+            --color-primary: #059669; /* emerald-600 */
+            --color-secondary: #D1FAE5; /* emerald-100 */
+            --color-text-dark: #1F2937; /* gray-800 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB; /* Light Gray Background */
+        }
+        .header-bg {
+            background-color: var(--color-primary);
+        }
+        .card-border {
+            border-left: 4px solid var(--color-primary);
+        }
+        .text-primary {
+            color: var(--color-primary);
+        }
+        /* Estilo para a animação de loading do Assistente */
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        /* Estilo para botão do WhatsApp */
+        .btn-whatsapp {
+            background-color: #25D366;
+            transition: all 0.3s ease;
+        }
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(18, 140, 126, 0.3);
+        }
+        /* Efeito de destaque nas linhas recomendadas pelo IA */
+        .highlighted-line {
+            animation: highlight 2s ease-in-out;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3);
+        }
+        @keyframes highlight {
+            0%, 100% { box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.6); }
+        }
+        /* Estilo do Mapa */
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 1;
+        }
+        .leaflet-popup-content {
+            font-family: 'Inter', sans-serif;
+        }
+        .leaflet-control-attribution {
+            font-size: 10px;
+        }
+        /* Badges para categorias */
+        .badge-automotivo {
+            background-color: #3B82F6;
+            color: white;
+        }
+        .badge-residencial {
+            background-color: #10B981;
+            color: white;
+        }
+        .badge-comercial {
+            background-color: #8B5CF6;
+            color: white;
+        }
+        .badge-seguranca {
+            background-color: #EF4444;
+            color: white;
+        }
+        .badge-economico {
+            background-color: #F59E0B;
+            color: white;
+        }
+        /* Ícones de benefícios */
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- CABEÇALHO (Header) - Fixo e Minimalista -->
+    <header class="header-bg shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <div class="bg-white p-2 rounded-lg mr-4">
+                    <!-- Logo Placeholder - substitua pela sua logo -->
+                    <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-sun text-white text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-extrabold text-white tracking-wider">
+                        <span class="font-light">Bras</span>Film
+                    </h1>
+                    <p class="text-white text-sm font-medium italic">
+                        "Deixe o sol do lado de fora!"
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Botão WhatsApp Fixo no Cabeçalho -->
+            <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20películas%20de%20controle%20solar" 
+               target="_blank" 
+               class="btn-whatsapp text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center">
+                <i class="fab fa-whatsapp text-xl mr-2"></i>
+                Fale Conosco
+            </a>
+        </div>
+    </header>
+
+    <!-- SEÇÃO PRINCIPAL - Introdução e Assistente IA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <section class="text-center mb-16">
+            <h2 class="text-5xl font-extrabold text-gray-800 mb-4">Encontre a Película Perfeita para Sua Necessidade</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Especialistas em Vilhena/RO oferecendo as melhores soluções em películas de controle solar para carros, casas e empresas.
+            </p>
+            
+            <!-- Botão WhatsApp Adicional -->
+            <div class="mt-8">
+                <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20um%20orçamento%20para%20películas%20de%20controle%20solar" 
+                   target="_blank" 
+                   class="btn-whatsapp text-white font-bold py-4 px-8 rounded-lg shadow-xl inline-flex items-center text-lg">
+                    <i class="fab fa-whatsapp text-2xl mr-3"></i>
+                    Solicitar Orçamento pelo WhatsApp
+                </a>
+                <p class="text-gray-500 text-sm mt-2">(69) 9.8139-0600 - Atendimento Rápido</p>
+            </div>
+        </section>
+        
+        <!-- ASSISTENTE DE SELEÇÃO INTELIGENTE -->
+        <section class="bg-white rounded-xl shadow-2xl p-6 md:p-10 mb-16 border border-gray-100">
+            <div class="flex items-center justify-center mb-6">
+                <div class="bg-emerald-100 p-3 rounded-full mr-4">
+                    <i class="fas fa-robot text-emerald-600 text-2xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-800">✨ Não sabe qual película escolher?</h3>
+            </div>
+            
+            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                Descreva o que você precisa e nosso assistente recomendará a melhor opção!
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <textarea id="promptInput" rows="3" 
+                          class="flex-grow p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none text-lg"
+                          placeholder="Ex: 'Preciso de privacidade no meu carro, mas quero ver bem à noite' ou 'Minha casa fica muito quente à tarde, qual película reduz mais calor?'"></textarea>
+                <button id="recommendButton" 
+                        class="bg-emerald-600 text-white font-semibold py-4 px-8 rounded-lg hover:bg-emerald-700 transition duration-200 shadow-md flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        onclick="getRecommendation()">
+                    <span id="buttonText">Recomendar Película ✨</span>
+                    <div id="loadingIndicator" class="hidden h-6 w-6 border-2 border-t-2 border-t-white border-emerald-200 rounded-full pulse-animation ml-3"></div>
+                </button>
+            </div>
+
+            <div class="text-center text-gray-500 text-sm mb-4">
+                <i class="fas fa-lightbulb mr-2"></i>
+                <span>Exemplos: "carro econômico", "casa com muito sol", "escritório com privacidade", "vidro de segurança"</span>
+            </div>
+
+            <!-- Área de Resultados -->
+            <div id="recommendationResult" class="bg-emerald-50 p-6 rounded-lg border border-emerald-200 hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <h4 class="font-bold text-2xl text-emerald-800 flex items-center">
+                        <i class="fas fa-star mr-2"></i> Recomendação Personalizada
+                    </h4>
+                    <button onclick="shareRecommendation()" class="text-emerald-600 hover:text-emerald-800">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+                <div id="recommendationText" class="text-gray-700 text-lg"></div>
+                
+                <div class="mt-6 p-4 bg-white rounded-lg border border-emerald-100">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-emerald-700" id="recommendedProductName"></p>
+                            <p class="text-sm text-gray-600" id="recommendedProductDescription"></p>
+                        </div>
+                        <a id="whatsappProductLink" 
+                           href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20película%20"
+                           target="_blank"
+                           class="bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-emerald-700 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Saber Mais
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-emerald-200">
+                    <p id="recommendationSource" class="text-xs text-gray-500"></p>
+                    <button onclick="resetAssistant()" class="text-sm text-emerald-600 hover:text-emerald-800">
+                        <i class="fas fa-redo mr-1"></i> Nova Consulta
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUIA RÁPIDO DE ESCOLHA -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-10">Escolha por Tipo de Necessidade</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
+                    <div class="bg-blue-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-car text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Para Carros</h3>
+                    <p class="text-gray-600">Privacidade, conforto térmico e proteção UV para seu veículo</p>
+                    <button onclick="filterProducts('automotivo')" class="mt-4 text-blue-600 font-semibold hover:text-blue-800">
+                        Ver opções →
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
+                    <div class="bg-green-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-home text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Para Casas</h3>
+                    <p class="text-gray-600">Conforto térmico, economia de energia e proteção familiar</p>
+                    <button onclick="filterProducts('residencial')" class="mt-4 text-green-600 font-semibold hover:text-green-800">
+                        Ver opções →
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
+                    <div class="bg-purple-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-building text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Para Empresas</h3>
+                    <p class="text-gray-600">Privacidade, segurança e redução de custos com ar-condicionado</p>
+                    <button onclick="filterProducts('comercial')" class="mt-4 text-purple-600 font-semibold hover:text-purple-800">
+                        Ver opções →
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition">
+                    <div class="bg-red-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Segurança</h3>
+                    <p class="text-gray-600">Proteção contra vandalismo, estilhaços e invasões</p>
+                    <button onclick="filterProducts('seguranca')" class="mt-4 text-red-600 font-semibold hover:text-red-800">
+                        Ver opções →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATÁLOGO COMPLETO DE PELÍCULAS -->
+        <section class="mb-20">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-4xl font-bold text-gray-800">Catálogo Completo de Películas</h2>
+                <div class="flex space-x-2">
+                    <button id="showAllBtn" onclick="showAllProducts()" 
+                            class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition">
+                        Ver Todas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Container de Cartões (Grid Responsivo) -->
+            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3" id="productCards">
+
+                <!-- PELÍCULA 1: FUMÊ TRADICIONAL (A mais comum no Brasil) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="fume-tradicional" data-category="automotivo economico">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película Fumê Tradicional</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-automotivo text-xs font-bold px-3 py-1 rounded-full">Automotivo</span>
+                                <span class="badge-economico text-xs font-bold px-3 py-1 rounded-full">Econômica</span>
+                            </div>
+                        </div>
+                        <span class="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">Mais Vendida</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> A película mais popular do Brasil, oferece privacidade visual e proteção solar básica com excelente custo-benefício.
+                    </p>
+
+                    <div class="mb-4">
+                        <h4 class="font-bold mb-2 text-gray-800">Escolha o nível de escurecimento:</h4>
+                        <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                            <div class="bg-gray-100 p-2 rounded">
+                                <div class="font-bold">G5</div>
+                                <div class="text-xs text-gray-600">Máxima Privacidade</div>
+                            </div>
+                            <div class="bg-gray-100 p-2 rounded">
+                                <div class="font-bold">G20</div>
+                                <div class="text-xs text-gray-600">Mais Procurada</div>
+                            </div>
+                            <div class="bg-gray-100 p-2 rounded">
+                                <div class="font-bold">G35</div>
+                                <div class="text-xs text-gray-600">Legal DETRAN</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer <strong>privacidade</strong> no carro ou casa</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Tem um <strong>orçamento limitado</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Prefere a <strong>aparência escura tradicional</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20Fumê%20Tradicional"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- PELÍCULA 2: CERÂMICA PREMIUM (Antiga SKY ADVANCE) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="ceramica-premium" data-category="automotivo residencial comercial">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película Cerâmica Premium</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-automotivo text-xs font-bold px-3 py-1 rounded-full">Automotivo</span>
+                                <span class="badge-residencial text-xs font-bold px-3 py-1 rounded-full">Residencial</span>
+                                <span class="badge-comercial text-xs font-bold px-3 py-1 rounded-full">Comercial</span>
+                            </div>
+                        </div>
+                        <span class="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">Tecnologia</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> A película de mais alta tecnologia, usa nanotecnologia cerâmica para bloquear calor sem interferir em sinais de GPS ou celular.
+                    </p>
+
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-600">Proteção UV:</span>
+                            <span class="font-bold text-emerald-600">99%</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-600">Rejeição de Calor:</span>
+                            <span class="font-bold text-emerald-600">Até 84%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-gray-600">Interfere em sinais:</span>
+                            <span class="font-bold text-red-600">NÃO</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Tem um <strong>carro com GPS, Bluetooth, sensores</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer o <strong>máximo conforto térmico</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Busca tecnologia de <strong>última geração</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20Cerâmica%20Premium"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PELÍCULA 3: ESPELHADA/REFLETIVA (Antiga ILLUSION) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="espelhada-refletiva" data-category="comercial residencial">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película Espelhada/Refletiva</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-comercial text-xs font-bold px-3 py-1 rounded-full">Comercial</span>
+                                <span class="badge-residencial text-xs font-bold px-3 py-1 rounded-full">Residencial</span>
+                            </div>
+                        </div>
+                        <span class="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">Privacidade</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> Película com efeito de espelho durante o dia. De fora parece espelhada, mas de dentro você vê normalmente. Privacidade total.
+                    </p>
+
+                    <div class="mb-4">
+                        <div class="bg-gradient-to-r from-gray-100 to-gray-300 p-4 rounded-lg text-center mb-3">
+                            <p class="font-bold text-gray-800">"Efeito Espelho"</p>
+                            <p class="text-sm text-gray-600">Durante o dia: vê de dentro, não vê de fora</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Precisa de <strong>privacidade em escritórios, clínicas</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer <strong>reduzir drasticamente o calor</strong> por reflexão</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Gosta da <strong>aparência moderna e profissional</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20Espelhada/Refletiva"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PELÍCULA 4: HÍBRIDA G35 (Nova opção) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="hibrida-g35" data-category="automotivo">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película Híbrida G35</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-automotivo text-xs font-bold px-3 py-1 rounded-full">Automotivo</span>
+                            </div>
+                        </div>
+                        <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">Equilibrada</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> Combinação perfeita entre tecnologia metalizada e tingida. Oferece bom desempenho sem interferir em sinais eletrônicos do carro.
+                    </p>
+
+                    <div class="mb-4">
+                        <div class="text-center bg-gray-100 p-3 rounded-lg mb-3">
+                            <p class="font-bold text-emerald-600">PERFEITA PARA DETRAN</p>
+                            <p class="text-sm text-gray-600">35% de passagem de luz - Dentro da lei</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Tem um <strong>carro com muitos sistemas eletrônicos</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer <strong>ficar dentro da lei do DETRAN</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Busca <strong>equilíbrio entre preço e qualidade</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20Híbrida%20G35"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PELÍCULA 5: SEGURANÇA ANTIFURTO (Nova opção) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="seguranca-antifurto" data-category="seguranca residencial comercial">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película de Segurança Antifurto</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-seguranca text-xs font-bold px-3 py-1 rounded-full">Segurança</span>
+                                <span class="badge-residencial text-xs font-bold px-3 py-1 rounded-full">Residencial</span>
+                                <span class="badge-comercial text-xs font-bold px-3 py-1 rounded-full">Comercial</span>
+                            </div>
+                        </div>
+                        <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">Proteção</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> Película extra grossa (4-8x mais espessa) que segura os estilhaços em caso de quebra, dificultando invasões e protegendo contra acidentes.
+                    </p>
+
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-600">Espessura:</span>
+                            <span class="font-bold text-emerald-600">4-8 mil (4x mais grossa)</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-600">Resistência a impacto:</span>
+                            <span class="font-bold text-emerald-600">Alta</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-gray-600">Retarda invasão:</span>
+                            <span class="font-bold text-emerald-600">2-4 minutos</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Tem <strong>crianças em casa</strong> (protege de estilhaços)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Tem uma <strong>loja, escritório ou casa em área de risco</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer <strong>proteção extra contra vandalismo</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20de%20Segurança%20Antifurto"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PELÍCULA 6: BAIXA REFLEXÃO INTERNA (Antiga DAYDREAM) -->
+                <div class="product-card bg-white rounded-xl shadow-2xl p-6 card-border flex flex-col transition-all duration-300 hover:shadow-3xl hover:translate-y-[-4px]" 
+                     data-product="baixa-reflexao" data-category="residencial">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2 text-emerald-600">Película Baixa Reflexão Interna</h3>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="badge-residencial text-xs font-bold px-3 py-1 rounded-full">Residencial</span>
+                            </div>
+                        </div>
+                        <span class="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">Conforto</span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4 flex-grow">
+                        <strong>O que é:</strong> Projetada especificamente para residências. Reduz reflexos na TV/tela à noite e permite ver perfeitamente para fora mesmo no escuro.
+                    </p>
+
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-medium text-gray-600">Reflexão interna:</span>
+                            <span class="font-bold text-emerald-600">< 10% (baixíssima)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-gray-600">Visão noturna:</span>
+                            <span class="font-bold text-emerald-600">Excelente</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-bold mb-3 text-lg text-gray-800">Você deve escolher esta película se:</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Assiste <strong>TV ou usa computador à noite</strong> (reduz reflexos)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Quer ver bem <strong>para fora à noite</strong> (segurança)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="benefit-icon bg-emerald-100 text-emerald-600 mr-2 flex-shrink-0">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span>Busca <strong>conforto visual dentro de casa</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-gray-200">
+                        <a href="https://wa.me/5569981390600?text=Olá%20BrasFilm,%20gostaria%20de%20saber%20mais%20sobre%20a%20Película%20Baixa%20Reflexão%20Interna"
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
+                            <i class="fab fa-whatsapp mr-2"></i> Pedir Orçamento
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+    
+    <!-- SEÇÃO DO MAPA E LOCALIZAÇÃO -->
+    <section class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Nossa Localização em Vilhena</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Estamos localizados no coração de Vilhena, Rondônia, prontos para atender toda a região com qualidade e expertise.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <!-- Mapa Interativo -->
+                <div class="rounded-xl overflow-hidden shadow-2xl">
+                    <div id="map"></div>
+                </div>
+                
+                <!-- Informações de Contato -->
+                <div class="bg-white p-8 rounded-xl shadow-xl border border-emerald-100">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-emerald-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-map-marker-alt text-emerald-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800">BrasFilm Vilhena</h3>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-map-pin text-emerald-500 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-700">Endereço Comercial</h4>
+                                <p class="text-gray-600">Vilhena, Rondônia - Brasil</p>
+                                <p class="text-sm text-gray-500 mt-1">Atendemos toda a região de Vilhena e cidades próximas</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-phone text-emerald-500 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-700">Telefone e WhatsApp</h4>
+                                <p class="text-gray-600 text-lg font-semibold">(69) 9.8139-0600</p>
+                                <p class="text-sm text-gray-500 mt-1">Atendimento preferencial por WhatsApp</p>
+                            </div>
+                        </div>
+                        
+                       
+                        
+                        <div class="flex items-start">
+                            <i class="fas fa-car text-emerald-500 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-700">Área de Atuação</h4>
+                                <p class="text-gray-600">Vilhena e região</p>
+                                <p class="text-sm text-gray-500 mt-1">Serviço móvel - vamos até você!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <a href="https://www.google.com/maps/dir//Vilhena,+RO" 
+                           target="_blank"
+                           class="block w-full bg-emerald-600 text-white text-center py-3 px-6 rounded-lg hover:bg-emerald-700 transition font-bold">
+                            <i class="fas fa-directions mr-2"></i> Obter Rotas no Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- SEÇÃO DE COMPARAÇÃO -->
+    <section class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Comparação Rápida entre Películas</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+                    <thead class="bg-emerald-50">
+                        <tr>
+                            <th class="py-4 px-6 border-b text-left font-bold text-gray-700">Película</th>
+                            <th class="py-4 px-6 border-b text-center font-bold text-gray-700">Melhor Para</th>
+                            <th class="py-4 px-6 border-b text-center font-bold text-gray-700">Custo-Benefício</th>
+                            <th class="py-4 px-6 border-b text-center font-bold text-gray-700">Tecnologia</th>
+                            <th class="py-4 px-6 border-b text-center font-bold text-gray-700">Privacidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6 border-b font-medium text-emerald-600">Fumê Tradicional</td>
+                            <td class="py-4 px-6 border-b text-center">Carros econômicos</td>
+                            <td class="py-4 px-6 border-b text-center">
+                                <div class="flex justify-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Excelente</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 border-b text-center">Tingida</td>
+                            <td class="py-4 px-6 border-b text-center">Alta</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6 border-b font-medium text-emerald-600">Cerâmica Premium</td>
+                            <td class="py-4 px-6 border-b text-center">Carros modernos</td>
+                            <td class="py-4 px-6 border-b text-center">
+                                <div class="flex justify-center">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">Alto</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 border-b text-center">Cerâmica</td>
+                            <td class="py-4 px-6 border-b text-center">Média-Alta</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6 border-b font-medium text-emerald-600">Híbrida G35</td>
+                            <td class="py-4 px-6 border-b text-center">DETRAN + Eletrônicos</td>
+                            <td class="py-4 px-6 border-b text-center">
+                                <div class="flex justify-center">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Bom</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 border-b text-center">Híbrida</td>
+                            <td class="py-4 px-6 border-b text-center">Média</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6 border-b font-medium text-emerald-600">Segurança Antifurto</td>
+                            <td class="py-4 px-6 border-b text-center">Casas/Lojas</td>
+                            <td class="py-4 px-6 border-b text-center">
+                                <div class="flex justify-center">
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Médio</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 border-b text-center">Grossa</td>
+                            <td class="py-4 px-6 border-b text-center">Alta</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    
+    <!-- SEÇÃO DE CONTATO -->
+    <section class="bg-emerald-700 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ainda em Dúvida?</h2>
+            <p class="text-xl mb-10 max-w-3xl mx-auto">Fale diretamente com nosso especialista em Vilhena!</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-10">
+                <div class="bg-emerald-800 p-6 rounded-xl">
+                    <i class="fas fa-phone text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Telefone Direto</h3>
+                    <p class="text-2xl font-bold">(69) 9.8139-0600</p>
+                </div>
+                
+                <div class="bg-emerald-800 p-6 rounded-xl">
+                    <i class="fab fa-whatsapp text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">WhatsApp Rápido</h3>
+                    <a href="https://wa.me/5569981390600" 
+                       target="_blank"
+                       class="block bg-white text-emerald-700 font-bold py-3 px-6 rounded-lg hover:bg-emerald-100 transition mt-4">
+                        <i class="fab fa-whatsapp mr-2"></i> Clique para Conversar
+                    </a>
+                </div>
+                
+                <div class="bg-emerald-800 p-6 rounded-xl">
+                    <i class="fas fa-comments text-3xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Consulta Grátis</h3>
+                    <p class="text-lg">Análise gratuita da sua necessidade</p>
+                    <p class="text-lg">Orçamento sem compromisso</p>
+                </div>
+            </div>
+            
+            <p class="text-2xl italic">"Deixe o sol do lado de fora!"</p>
+        </div>
+    </section>
+    
+    <!-- RODAPÉ -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-bold mb-2">BrasFilm Vilhena</h3>
+                    <p class="text-emerald-300 italic">"Deixe o sol do lado de fora!"</p>
+                    <p class="text-gray-400 text-sm mt-4">Especialistas em Películas de Controle Solar em Vilhena/RO</p>
+                </div>
+                
+                <div class="text-center md:text-right">
+                    <p class="mb-2">&copy; <span id="current-year"></span> BrasFilm - Todos os direitos reservados</p>
+                    <p class="text-gray-400 text-sm">Vilhena, Rondônia - Brasil | (69) 9.8139-0600</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <a href="https://wa.me/5569981390600" 
+       target="_blank"
+       class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all duration-300 z-50 animate-bounce"
+       style="animation-duration: 2s;">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+
+    <!-- Leaflet JS para Mapa -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Atualiza o ano no rodapé automaticamente
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // -------------------------------------------------------------
+        // FILTRAGEM DE PRODUTOS POR CATEGORIA
+        // -------------------------------------------------------------
+        function filterProducts(category) {
+            const allCards = document.querySelectorAll('.product-card');
+            const showAllBtn = document.getElementById('showAllBtn');
+            
+            allCards.forEach(card => {
+                const cardCategories = card.getAttribute('data-category');
+                if (cardCategories.includes(category)) {
+                    card.style.display = 'flex';
+                    card.classList.add('highlighted-line');
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('highlighted-line');
+                }
+            });
+            
+            // Atualiza texto do botão
+            showAllBtn.textContent = 'Ver Todas';
+            
+            // Rola para a seção de produtos
+            document.getElementById('productCards').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showAllProducts() {
+            const allCards = document.querySelectorAll('.product-card');
+            const showAllBtn = document.getElementById('showAllBtn');
+            
+            allCards.forEach(card => {
+                card.style.display = 'flex';
+                card.classList.remove('highlighted-line');
+            });
+            
+            showAllBtn.textContent = 'Mostrando Todas';
+        }
+
+        // -------------------------------------------------------------
+        // INICIALIZAÇÃO DO MAPA - VILHENA/RO
+        // -------------------------------------------------------------
+        function initMap() {
+            // Coordenadas de Vilhena, Rondônia
+            const vilhenaCoords = [-12.7402, -60.1458];
+            
+            // Criar mapa
+            const map = L.map('map').setView(vilhenaCoords, 14);
+            
+            // Adicionar camada do mapa (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+            }).addTo(map);
+            
+            // Marcador personalizado
+            const customIcon = L.divIcon({
+                html: '<div class="bg-emerald-600 text-white p-3 rounded-full shadow-lg border-4 border-white"><i class="fas fa-map-marker-alt text-xl"></i></div>',
+                iconSize: [50, 50],
+                iconAnchor: [25, 50],
+                popupAnchor: [0, -45]
+            });
+            
+            // Adicionar marcador
+            const marker = L.marker(vilhenaCoords, { icon: customIcon }).addTo(map);
+            
+            // Adicionar popup com informações
+            marker.bindPopup(`
+                <div class="font-sans p-2">
+                    <h3 class="font-bold text-lg text-emerald-700">BrasFilm Vilhena</h3>
+                    <p class="text-gray-600">Especialistas em Películas de Controle Solar</p>
+                    <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-phone mr-1"></i> (69) 9.8139-0600
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        <i class="fas fa-map-marker-alt mr-1"></i> Vilhena, Rondônia
+                    </p>
+                    <a href="https://wa.me/5569981390600" 
+                       target="_blank"
+                       class="inline-block mt-3 bg-emerald-600 text-white px-3 py-1 rounded text-sm hover:bg-emerald-700 transition">
+                        <i class="fab fa-whatsapp mr-1"></i> Fale Conosco
+                    </a>
+                </div>
+            `).openPopup();
+            
+            // Adicionar círculo de área de atuação
+            L.circle(vilhenaCoords, {
+                color: '#059669',
+                fillColor: '#D1FAE5',
+                fillOpacity: 0.2,
+                radius: 2000 // 2km de raio
+            }).addTo(map);
+            
+            // Controles do mapa
+            L.control.zoom({ position: 'topright' }).addTo(map);
+            
+            // Ajustar mapa quando a janela for redimensionada
+            window.addEventListener('resize', () => {
+                map.invalidateSize();
+            });
+        }
+        
+        // Inicializar mapa quando a página carregar
+        document.addEventListener('DOMContentLoaded', initMap);
+
+        // -------------------------------------------------------------
+        // DADOS DOS PRODUTOS PARA O ASSISTENTE DE IA
+        // -------------------------------------------------------------
+        const productDatabase = {
+            "fume-tradicional": {
+                name: "Película Fumê Tradicional",
+                benefits: "A película mais popular do Brasil. Excelente custo-benefício, privacidade garantida e proteção solar básica. Disponível em G5 (máxima privacidade), G20 (mais vendida) e G35 (dentro da lei do DETRAN).",
+                idealFor: "Quem busca privacidade com orçamento limitado, aparência escura tradicional",
+                keywords: ["fumê", "tradicional", "econômico", "barato", "orçamento", "privacidade", "g5", "g20", "g35", "básico", "popular"]
+            },
+            "ceramica-premium": {
+                name: "Película Cerâmica Premium",
+                benefits: "Tecnologia de última geração com nanotecnologia cerâmica. Bloqueia até 84% do calor e 99% dos raios UV sem interferir em sinais de GPS, celular ou rádio. Máximo conforto térmico.",
+                idealFor: "Carros modernos com eletrônicos, máximo conforto térmico, tecnologia avançada",
+                keywords: ["cerâmica", "premium", "tecnologia", "gps", "celular", "sinal", "moderno", "conforto", "calor", "avançado", "carro novo"]
+            },
+            "espelhada-refletiva": {
+                name: "Película Espelhada/Refletiva",
+                benefits: "Efeito de espelho durante o dia. Privacidade total: de fora não vê, de dentro vê normalmente. Excelente para redução de calor por reflexão. Aparência profissional e moderna.",
+                idealFor: "Escritórios, clínicas, privacidade, redução drástica de calor, aparência profissional",
+                keywords: ["espelhada", "refletiva", "espelho", "privacidade", "escritório", "comercial", "clínica", "profissional", "moderno", "reflexão"]
+            },
+            "hibrida-g35": {
+                name: "Película Híbrida G35",
+                benefits: "Equilíbrio perfeito entre tecnologia metalizada e tingida. Não interfere em sinais eletrônicos e está dentro da lei do DETRAN (35% passagem de luz). Ideal para carros com muitos sistemas.",
+                idealFor: "Carros com eletrônicos, dentro da lei do DETRAN, equilíbrio preço/qualidade",
+                keywords: ["híbrida", "g35", "detran", "legal", "eletrônico", "equilibrado", "sinal", "interferência", "lei", "balanceado"]
+            },
+            "seguranca-antifurto": {
+                name: "Película de Segurança Antifurto",
+                benefits: "4-8 vezes mais espessa que película comum. Segura estilhaços em caso de quebra, dificulta invasões (retarda em 2-4 minutos). Protege crianças e aumenta segurança.",
+                idealFor: "Casas com crianças, lojas, áreas de risco, proteção extra, segurança",
+                keywords: ["segurança", "antifurto", "proteção", "criança", "estilhaço", "vidro quebrado", "invasão", "vandalismo", "grosso", "resistente"]
+            },
+            "baixa-reflexao": {
+                name: "Película Baixa Reflexão Interna",
+                benefits: "Especial para residências. Reduz reflexos na TV/tela à noite. Permite ver perfeitamente para fora no escuro. Conforto visual aumentado dentro de casa.",
+                idealFor: "Residências, assistir TV à noite, visão noturna, conforto visual",
+                keywords: ["baixa reflexão", "residencial", "casa", "tv", "reflexo", "noite", "visão", "conforto", "visual", "lar"]
+            }
+        };
+
+        // -------------------------------------------------------------
+        // FUNÇÃO DO ASSISTENTE DE IA SIMULADO
+        // -------------------------------------------------------------
+        function getRecommendation() {
+            const promptInput = document.getElementById('promptInput');
+            const recommendationResult = document.getElementById('recommendationResult');
+            const recommendationText = document.getElementById('recommendationText');
+            const recommendationSource = document.getElementById('recommendationSource');
+            const recommendButton = document.getElementById('recommendButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const recommendedProductName = document.getElementById('recommendedProductName');
+            const recommendedProductDescription = document.getElementById('recommendedProductDescription');
+            const whatsappProductLink = document.getElementById('whatsappProductLink');
+
+            const userPrompt = promptInput.value.trim().toLowerCase();
+
+            if (!userPrompt) {
+                recommendationText.innerHTML = '<p class="text-red-600">Por favor, descreva o que você precisa para obter uma recomendação personalizada.</p>';
+                recommendationResult.classList.remove('hidden');
+                return;
+            }
+
+            // Desativa o botão e mostra o loading
+            recommendButton.disabled = true;
+            document.getElementById('buttonText').textContent = 'Analisando...';
+            loadingIndicator.classList.remove('hidden');
+            recommendationResult.classList.add('hidden');
+
+            // Simula tempo de processamento da IA
+            setTimeout(() => {
+                // Análise do texto do usuário
+                let scores = {};
+                
+                // Pontua cada produto baseado nas palavras-chave
+                for (const [productId, product] of Object.entries(productDatabase)) {
+                    scores[productId] = 0;
+                    
+                    // Verifica cada palavra-chave do produto
+                    product.keywords.forEach(keyword => {
+                        if (userPrompt.includes(keyword.toLowerCase())) {
+                            scores[productId] += 3;
+                        }
+                    });
+                }
+                
+                // Encontra o produto com maior pontuação
+                let bestProductId = Object.keys(scores)[0];
+                let maxScore = 0;
+                
+                for (const [productId, score] of Object.entries(scores)) {
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestProductId = productId;
+                    }
+                }
+                
+                const bestProduct = productDatabase[bestProductId];
+                
+                // Remove destaque anterior
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.classList.remove('highlighted-line');
+                });
+                
+                // Adiciona destaque ao produto recomendado
+                const recommendedCard = document.querySelector(`.product-card[data-product="${bestProductId}"]`);
+                if (recommendedCard) {
+                    recommendedCard.classList.add('highlighted-line');
+                    recommendedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Gera a resposta da IA
+                const responses = {
+                    "fume-tradicional": `Baseado na sua necessidade, recomendo a <strong>Película Fumê Tradicional</strong>! Esta é a opção mais popular do Brasil, oferecendo excelente custo-benefício. Você pode escolher entre G5 (máxima privacidade), G20 (mais vendida) ou G35 (dentro da lei).`,
+                    "ceramica-premium": `Para o que você descreveu, a <strong>Película Cerâmica Premium</strong> é ideal! Usa nanotecnologia que não interfere em GPS/celular e bloqueia até 84% do calor. Perfeita para carros modernos ou quem busca máximo conforto.`,
+                    "espelhada-refletiva": `Sua situação pede a <strong>Película Espelhada/Refletiva</strong>! Oferece privacidade total durante o dia com efeito de espelho. Excelente para escritórios, clínicas ou quem quer reduzir drasticamente o calor.`,
+                    "hibrida-g35": `Considerando sua descrição, a <strong>Película Híbrida G35</strong> é a melhor escolha! Equilibra performance e preço, não interfere em sinais e está dentro da lei do DETRAN. Ideal para carros com muitos sistemas eletrônicos.`,
+                    "seguranca-antifurto": `Para sua necessidade de segurança, recomendo a <strong>Película de Segurança Antifurto</strong>! É 4-8x mais grossa, segura estilhaços e dificulta invasões. Essencial para casas com crianças ou estabelecimentos comerciais.`,
+                    "baixa-reflexao": `Baseado no que você precisa, a <strong>Película Baixa Reflexão Interna</strong> é perfeita! Projetada para residências, reduz reflexos na TV à noite e permite ver bem para fora no escuro. Máximo conforto visual.`
+                };
+                
+                // Atualiza a interface
+                recommendationText.innerHTML = responses[bestProductId] || 'Recomendamos que você entre em contato para uma análise personalizada!';
+                recommendedProductName.textContent = bestProduct.name;
+                recommendedProductDescription.textContent = bestProduct.idealFor;
+                
+                // Atualiza link do WhatsApp para o produto específico
+                const whatsappText = `Olá BrasFilm, gostaria de saber mais sobre a película ${bestProduct.name} (recomendada pelo assistente virtual)`;
+                const encodedText = encodeURIComponent(whatsappText);
+                whatsappProductLink.href = `https://wa.me/5569981390600?text=${encodedText}`;
+                
+                recommendationSource.textContent = `Recomendação personalizada - ${new Date().toLocaleDateString('pt-BR')}`;
+                recommendationResult.classList.remove('hidden');
+                
+                // Reativa o botão
+                recommendButton.disabled = false;
+                document.getElementById('buttonText').textContent = 'Recomendar Película ✨';
+                loadingIndicator.classList.add('hidden');
+                
+            }, 1500);
+        }
+
+        // -------------------------------------------------------------
+        // FUNÇÕES AUXILIARES
+        // -------------------------------------------------------------
+        function resetAssistant() {
+            document.getElementById('promptInput').value = '';
+            document.getElementById('recommendationResult').classList.add('hidden');
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.classList.remove('highlighted-line');
+            });
+        }
+
+        function shareRecommendation() {
+            const recommendation = document.getElementById('recommendationText').innerText;
+            const productName = document.getElementById('recommendedProductName').textContent;
+            
+            const shareText = `Recebi uma recomendação da BrasFilm Vilhena:\n\n${productName}\n\n${recommendation}\n\nSaiba mais: https://wa.me/5569981390600`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Recomendação BrasFilm Vilhena',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Recomendação copiada! Cole no WhatsApp para compartilhar.');
+                });
+            }
+        }
+
+        // Permite enviar com Enter (Shift+Enter para nova linha)
+        document.getElementById('promptInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                getRecommendation();
+            }
+        });
+    </script>
+</body>
+</html>
