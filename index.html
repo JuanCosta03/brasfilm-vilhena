@@ -18,6 +18,8 @@
         .btn-whatsapp:hover { background-color: #128C7E; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(37,211,102,0.4); }
         #map { height: 400px; width: 100%; border-radius: 20px; z-index: 10; border: 4px solid white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .badge { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 9999px; text-transform: uppercase; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="antialiased">
@@ -41,16 +43,16 @@
 
     <main class="max-w-7xl mx-auto px-4 mt-12">
         
-        <section id="ia-assistente" class="bg-white rounded-3xl shadow-2xl p-6 md:p-12 mb-20 border border-emerald-50">
+        <section id="ia-assistente" class="bg-white rounded-3xl shadow-2xl p-6 md:p-12 mb-12 border border-emerald-50">
             <div class="flex items-center mb-6">
                 <div class="bg-emerald-600 text-white p-3 rounded-2xl mr-4 shadow-lg"><i class="fas fa-robot text-xl"></i></div>
                 <h3 class="text-3xl font-bold text-gray-800 tracking-tight">Assistente de Seleção</h3>
             </div>
-            <p class="text-gray-600 mb-6 font-medium">Descreva o seu problema (ex: móveis desbotando, muito calor na sala, falta de privacidade no banheiro):</p>
+            <p class="text-gray-600 mb-6 font-medium">Descreva o seu problema (ex: muito calor na sala, falta de privacidade no banheiro):</p>
             <textarea id="promptInput" rows="3" class="w-full p-5 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 transition-all text-lg mb-4 shadow-inner" placeholder="O que você precisa resolver hoje?"></textarea>
             <button onclick="recomendarPelicula()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all uppercase tracking-widest">Descobrir a melhor película ✨</button>
             
-            <div id="resultadoIA" class="hidden mt-8 p-8 bg-emerald-50 border-l-8 border-emerald-500 rounded-2xl animate-pulse-once">
+            <div id="resultadoIA" class="hidden mt-8 p-8 bg-emerald-50 border-l-8 border-emerald-500 rounded-2xl animate-fade-in">
                 <h4 class="font-black text-emerald-900 text-xl mb-2">💡 Sugestão para o seu caso:</h4>
                 <p id="textoResposta" class="text-emerald-800 text-lg mb-6 leading-relaxed"></p>
                 <a id="linkIA" href="#" target="_blank" class="inline-flex items-center bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl uppercase text-sm shadow-md hover:bg-emerald-700">
@@ -59,116 +61,125 @@
             </div>
         </section>
 
-        <section class="mb-20">
-            <h2 class="text-4xl font-black text-gray-900 mb-4">Catálogo de Soluções</h2>
-            <p class="text-gray-500 mb-12">Clique no botão para receber o orçamento direto no WhatsApp.</p>
-            
-            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Nano<br>Cerâmica</h3>
-                        <span class="badge bg-emerald-100 text-emerald-700">Térmica Premium</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Bloqueio de calor extremo (até 90%) com total transparência.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para *NANO CERÂMICA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <div class="bg-white p-8 rounded-2xl shadow-lg text-center border-b-8 border-emerald-500 hover:scale-105 transition-transform">
+                <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 text-2xl">
+                    <i class="fas fa-home"></i>
                 </div>
-
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Espelhada<br>Prata</h3>
-                        <span class="badge bg-blue-100 text-blue-700">Privacidade</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Privacidade diurna e redução drástica de luz e brilho solar.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para película *ESPELHADA PRATA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
+                <h3 class="text-xl font-black mb-2">Residencial</h3>
+                <p class="text-gray-500 text-sm">Conforto para sua família e proteção para seus móveis.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-lg text-center border-b-8 border-blue-500 hover:scale-105 transition-transform">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-2xl">
+                    <i class="fas fa-building"></i>
                 </div>
-
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Jateada<br>Fosca</h3>
-                        <span class="badge bg-purple-100 text-purple-700">Decorativa</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Efeito de vidro fosco para box, portas e divisórias de escritório.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para película *JATEADA FOSCA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
+                <h3 class="text-xl font-black mb-2">Comercial</h3>
+                <p class="text-gray-500 text-sm">Privacidade e economia de energia para sua empresa.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl shadow-lg text-center border-b-8 border-red-500 hover:scale-105 transition-transform">
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600 text-2xl">
+                    <i class="fas fa-shield-halved"></i>
                 </div>
-
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Fumê<br>Arquitetônico</h3>
-                        <span class="badge bg-gray-100 text-gray-700">Custo-Benefício</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Disponível em G5, G20 e G35. Proteção UV com preço acessível.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para *FUMÊ RESIDENCIAL*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
-                </div>
-
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Blackout<br>Total</h3>
-                        <span class="badge bg-black text-white">Privacidade 100%</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Vedação total da luz. Transforma o dia em noite no ambiente.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para película *BLACKOUT*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
-                </div>
-
-                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Segurança<br>PS4 / PS8</h3>
-                        <span class="badge bg-red-100 text-red-700">Proteção</span>
-                    </div>
-                    <p class="text-gray-600 mb-6 text-sm">Aumenta a resistência do vidro e retém estilhaços em caso de quebra.</p>
-                    <a href="https://wa.me/5569981390600?text=Olá! Vi no site e quero um orçamento para película de *SEGURANÇA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600 transition-colors">Solicitar Preço</a>
-                </div>
-
+                <h3 class="text-xl font-black mb-2">Segurança</h3>
+                <p class="text-gray-500 text-sm">Películas anti-estilhaço para proteção total de vidros.</p>
             </div>
         </section>
 
         <section class="mb-20">
-            <h2 class="text-3xl font-black text-gray-900 mb-8 text-center uppercase tracking-tighter">Nossa Localização em Vilhena</h2>
-            <div id="map"></div>
-            <p class="text-center mt-4 text-gray-500 font-medium italic">Atendemos Vilhena e toda a região do Cone Sul.</p>
+            <h2 class="text-4xl font-black text-gray-900 mb-12">Nossas Películas</h2>
+            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Nano<br>Cerâmica</h3>
+                        <span class="badge bg-emerald-100 text-emerald-700 font-bold">Térmica</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Bloqueio de calor extremo (até 90%) com total transparência.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para *NANO CERÂMICA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Espelhada<br>Prata</h3>
+                        <span class="badge bg-blue-100 text-blue-700 font-bold">Privacidade</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Privacidade diurna e redução drástica de luz e brilho solar.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para *ESPELHADA PRATA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Jateada<br>Fosca</h3>
+                        <span class="badge bg-purple-100 text-purple-700 font-bold">Decorativa</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Efeito de vidro fosco para box, portas e divisórias.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para película *JATEADA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Fumê<br>Profissional</h3>
+                        <span class="badge bg-gray-100 text-gray-700 font-bold">Econômica</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Proteção UV básica e controle de claridade com ótimo preço.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para *FUMÊ RESIDENCIAL*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Blackout<br>Total</h3>
+                        <span class="badge bg-black text-white font-bold">Vedação</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Vedação visual e de luz 100%. Ideal para quartos e cinemas.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para película *BLACKOUT*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+                <div class="bg-white rounded-3xl shadow-xl p-8 card-border flex flex-col hover:-translate-y-2 transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 leading-none">Segurança<br>PS4</h3>
+                        <span class="badge bg-red-100 text-red-700 font-bold">Anti-Quebra</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 text-sm">Reforço invisível contra impactos e retenção de estilhaços.</p>
+                    <a href="https://wa.me/5569981390600?text=Olá! Quero um orçamento para película de *SEGURANÇA*." class="mt-auto block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-emerald-600">Ver Preço</a>
+                </div>
+            </div>
         </section>
 
+        <section class="mb-20">
+            <h2 class="text-3xl font-black text-gray-900 mb-8 text-center uppercase tracking-tighter">Onde Estamos em Vilhena</h2>
+            <div id="map"></div>
+        </section>
     </main>
 
     <footer class="bg-gray-900 text-white py-12 text-center">
-        <p class="font-bold">BrasFilm Películas © 2024</p>
-    </header>
+        <p class="font-bold">BrasFilm Películas © 2024 - Vilhena/RO</p>
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Inicialização do Mapa
         const map = L.map('map').setView([-12.7406, -60.1458], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        L.marker([-12.7406, -60.1458]).addTo(map).bindPopup('<b>BrasFilm Vilhena</b><br>Especialistas em Películas.').openPopup();
+        L.marker([-12.7406, -60.1458]).addTo(map).bindPopup('<b>BrasFilm Vilhena</b>').openPopup();
 
-        // Lógica da IA
         function recomendarPelicula() {
             const input = document.getElementById('promptInput').value.toLowerCase();
             const box = document.getElementById('resultadoIA');
             const resposta = document.getElementById('textoResposta');
             const linkIA = document.getElementById('linkIA');
-            
             let recomendacao = "";
             let tag = "";
 
-            if (input.includes("calor") || input.includes("sol") || input.includes("quente")) {
-                recomendacao = "Para o sol forte, a **Nano Cerâmica** é a melhor por não escurecer, ou a **Espelhada** se você também quiser privacidade.";
-                tag = "CALOR E SOL";
-            } else if (input.includes("privacidade") || input.includes("ver") || input.includes("vendo")) {
-                recomendacao = "A **Espelhada Prata** é perfeita para janelas externas e a **Jateada** para banheiros e divisórias.";
+            if (input.includes("calor") || input.includes("sol")) {
+                recomendacao = "Para o sol forte, a **Nano Cerâmica** é a melhor por não escurecer o ambiente.";
+                tag = "CALOR";
+            } else if (input.includes("privacidade") || input.includes("ver")) {
+                recomendacao = "A **Espelhada Prata** é perfeita para janelas e a **Jateada** para banheiros.";
                 tag = "PRIVACIDADE";
-            } else if (input.includes("segurança") || input.includes("quebrar") || input.includes("impacto")) {
-                recomendacao = "A película de **Segurança PS4** é a ideal para reforçar seus vidros contra acidentes e invasões.";
+            } else if (input.includes("segurança") || input.includes("quebrar")) {
+                recomendacao = "A película de **Segurança PS4** é a ideal para reforçar seus vidros.";
                 tag = "SEGURANÇA";
             } else {
-                recomendacao = "Recomendamos uma visita técnica para avaliar, mas a **Nano Cerâmica** costuma ser a solução ideal para 90% das residências.";
-                tag = "AVALIAÇÃO GERAL";
+                recomendacao = "Geralmente a **Nano Cerâmica** é a solução ideal. Vamos conversar?";
+                tag = "ORÇAMENTO";
             }
 
             resposta.innerHTML = recomendacao;
-            linkIA.href = "https://wa.me/5569981390600?text=" + encodeURIComponent("Olá! A IA do site me indicou película para " + tag + ". Gostaria de um orçamento.");
+            linkIA.href = "https://wa.me/5569981390600?text=" + encodeURIComponent("Olá! Usei o assistente do site para " + tag + ". Pode me ajudar?");
             box.classList.remove('hidden');
-            window.location.hash = '#ia-assistente';
         }
     </script>
 </body>
